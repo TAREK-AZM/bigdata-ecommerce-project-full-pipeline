@@ -99,7 +99,7 @@ class EcommerceDataGenerator:
             print(f"✗ Erreur envoi vers {topic}: {e}")
             return False
     
-    def generate_realistic_stream(self, duration_seconds=300, events_per_second=10):
+    def generate_realistic_stream(self, duration_seconds=600, events_per_second=10):
         """Génère un flux réaliste d'événements"""
         print(f"\n🚀 Génération de données pendant {duration_seconds}s ({events_per_second} événements/sec)")
         print(f"Topics: {list(TOPICS.values())}")
@@ -170,7 +170,7 @@ def main():
     
     # Générer pendant 5 minutes (300s) à 10 événements/seconde
     # Total: ~3000 événements
-    generator.generate_realistic_stream(duration_seconds=300, events_per_second=10)
+    generator.generate_realistic_stream(duration_seconds=600, events_per_second=10)
 
 if __name__ == "__main__":
     main()
