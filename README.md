@@ -104,8 +104,8 @@ Ce projet implémente un **pipeline Big Data complet** pour l'analyse en temps r
 
 ### Étape 1 : Cloner le Projet
 ```bash
-git clone https://github.com/elarbi-allam/bigdata-project.git
-cd bigdata-project
+git clone https://github.com/TAREK-AZM/bigdata-ecommerce-project-full-pipeline.git
+cd bigdata-ecommerce-project-full-pipeline
 ```
 
 ### Étape 2 : Démarrer l'Infrastructure Docker
@@ -259,66 +259,84 @@ docker cp spark-master:/tmp/rapport.md ./rapport_final.md
 
 | Métrique | Valeur |
 |----------|--------|
-| **Messages traités** | 200+ |
-| **Villes surveillées** | 6 |
-| **Capteurs actifs** | 20 |
-| **Latence moyenne** | < 10 secondes |
-| **Fichiers Parquet générés** | 30+ |
-| **Format de compression** | Snappy |
+| **Transactions traitées** | 2000+ |
+| **Villes couvertes** | 6 |
+| **Catégories produits** | 5 |
+| **Latence moyenne** | < 5 secondes |
+| **Volume de données** | ~50 MB/jour |
+| **Format de stockage** | Parquet (Snappy) |
 
 ### Exemple de Données Collectées
 ```
 +----------+----------+-----------+--------+--------------------------+
-|sensor_id |city      |temperature|humidity|timestamp                 |
-+----------+----------+-----------+--------+--------------------------+
-|SENSOR_003|Casablanca|32.45      |67.8    |2025-12-28 20:15:12       |
-|SENSOR_012|Marrakech |26.79      |45.2    |2025-12-28 20:15:13       |
-|SENSOR_007|Rabat     |29.34      |58.6    |2025-12-28 20:15:14       |
-+----------+----------+-----------+--------+--------------------------+
+|transaction_id|product_category|amount |payment_method|city      |timestamp          |
++--------------+----------------+-------+--------------+----------+-------------------+
+|TXN_10023     |Electronics     |245.50 |Credit Card   |Casablanca|2025-12-28 20:15:12|
+|TXN_10024     |Fashion         |89.99  |Cash          |Marrakech |2025-12-28 20:15:13|
+|TXN_10025     |Home & Garden   |120.00 |Mobile App    |Rabat     |2025-12-28 20:15:14|
++--------------+----------------+-------+--------------+----------+-------------------+
 ```
 
 ### Agrégations par Ville
 ```
 +----------+------------------+--------+--------+------------+
-|city      |avg_temp          |max_temp|min_temp|num_readings|
-+----------+------------------+--------+--------+------------+
-|Marrakech |33.45             |44.2    |18.5    |45          |
-|Casablanca|31.23             |42.8    |16.3    |52          |
-|Agadir    |29.87             |39.5    |19.2    |38          |
-+----------+------------------+--------+--------+------------+
+|city      |total_revenue     |transaction_count|avg_basket|top_category|
++----------+------------------+-----------------+----------+------------+
+|Marrakech |15420.50          |145              |106.34    |Fashion     |
+|Casablanca|23500.00          |210              |111.90    |Electronics |
+|Agadir    |9800.75           |98               |100.01    |Sports      |
++----------+------------------+-----------------+----------+------------+
 ```
 
 ### Alertes Détectées
 
-- 🔥 **Températures > 40°C :** 23 occurrences
-- ❄️ **Températures < 20°C :** 18 occurrences
+- 💰 **Transactions > 1000 MAD :** 15 occurrences (Ventes High-Ticket)
+- 📈 **Pic de ventes :** 20:00 - 21:00 (Heure de pointe)
 
 ---
 
 ## 📁 Structure du Projet
 ```
-bigdata-project/
-├── docker-compose.yml          # Configuration Docker
+bigdata-ecommerce-project-full-pipeline/
+├── AL AZAMI TAREK RAPPORT BIG DATA PANACHE PROJECT.pdf
 ├── README.md                   # Ce fichier
-├── rapport_bigdata_iot.tex     # Rapport LaTeX
-├── data/                       # (vide - données temporaires)
+├── dashboard/
+│   └── dashboard.html          # Dashboard de visualisation
+├── data/                       # Données
+├── docker-compose.yml          # Configuration Docker
+├── hadoop.env                  # Variables d'environnement Hadoop
+├── rapport_ecommerce.md        # Rapport d'analyse généré
+├── rapport_projet.tex          # Rapport LaTeX source
+├── requirements.txt            # Dépendances Python
+├── screenShots/
+│   ├── 1.png
+│   └── 2.png
 └── scripts/
-    ├── producer.py             # Producteur Kafka
+    ├── analysis.py             # Analyse finale
+    ├── automation/             # Scripts d'automatisation
+    │   ├── README.md
+    │   ├── run-analysis.sh
+    │   ├── setup.sh
+    │   ├── start-all.sh
+    │   ├── start-consumer.sh
+    │   ├── start-producer.sh
+    │   └── stop-all.sh
     ├── consumer_spark.py       # Consumer Spark Streaming
-    └── analysis.py             # Analyse finale
+    ├── dashboard_server.py     # Serveur Dashboard
+    └── producer.py             # Producteur Kafka
 ```
 
 ### Description des Scripts
 
 #### 1. `producer.py`
 
-Simule 20 capteurs IoT envoyant des données de température et d'humidité à Kafka.
+Simule des transactions e-commerce en temps réel avec des données réalistes.
 
 **Fonctionnalités :**
-- Génération aléatoire de température (15-45°C)
-- Génération aléatoire d'humidité (20-90%)
+- Génération aléatoire de montants et catégories
+- Simulation de méthodes de paiement (Carte, Cash, Mobile)
 - Envoi à Kafka toutes les 1 seconde
-- 6 villes différentes
+- 6 villes marocaines (Casablanca, Rabat, Marrakech, etc.)
 
 #### 2. `consumer_spark.py`
 
@@ -336,9 +354,9 @@ Script d'analyse batch des données stockées.
 
 **Fonctionnalités :**
 - Lecture des fichiers Parquet
-- Calcul de statistiques par ville
-- Détection d'alertes (températures extrêmes)
-- Génération de rapport Markdown
+- Calcul de statistiques par ville (Chiffre d'affaires total, Panier moyen)
+- Identification des catégories les plus vendues
+- Génération de rapport Markdown structuré
 
 ---
 
@@ -366,7 +384,7 @@ docker exec -it -u root spark-master bash -c "mkdir -p /home/spark/.ivy2/cache &
 
 ### Problème : Topic Kafka existe déjà
 ```powershell
-docker exec -it kafka kafka-topics --delete --topic iot-temperature --bootstrap-server localhost:9092
+docker exec -it kafka kafka-topics --delete --topic ecommerce-transactions --bootstrap-server localhost:9092
 ```
 
 ---
